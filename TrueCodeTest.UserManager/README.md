@@ -7,6 +7,7 @@ This tool uses the `MessageReader` component to parse commands from the console 
 - **MessageReader**: This component handles reading console input, breaking it down into manageable commands.
 - **CommandStreamProcessor**: Parses messages into commands.
 - **Database Integration**: Entity Framework Core and SQLite database.
+- **Ardalis.Specification**
 
 ## Setup
 Before you start, make sure you've installed all necessary NuGet packages. Set the `SQLITE_CONNECTION` environment variable.
