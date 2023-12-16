@@ -57,4 +57,3 @@ async Task ReadMessagesFromFile(string path)
 
 ## Dependencies
 - .NET Core 8.0
-- Best with any IDE capable of working `launchSetting.json`

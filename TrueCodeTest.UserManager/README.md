@@ -26,4 +26,5 @@ Run the application and enter commands in JSON format, one per line. Available c
 
 ## Dependencies
 - .NET Core 8.0
-- Best with any IDE capable of working `launchSetting.json`
+- EF Core
+- Ardalis.Specification
