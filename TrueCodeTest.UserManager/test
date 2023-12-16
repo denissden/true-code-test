@@ -1,0 +1,18 @@
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Innovation"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Wellness"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Technology"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Learning"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Movies"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Software"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Fitness"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Economy"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Science"}
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Music"}
+
+{"CommandType": "find_users_by_tag", "Domain": "Technology", "Tag": "Music"}
+{"CommandType": "get_user", "Domain": "Technology", "Id": "0964fe9d-f895-4647-8149-4ce4ecc2c350"}
+
+{"CommandType": "list_domain_users", "Domain": "Technology", "PageNumber": 1, "PageSize": 1}
+{"CommandType": "list_domain_users", "Domain": "Technology", "PageNumber": 2, "PageSize": 1}
+{"CommandType": "list_domain_users", "Domain": "Technology", "PageNumber": 5, "PageSize": 1}
+{"CommandType": "list_domain_users", "Domain": "Technology", "PageNumber": 2, "PageSize": 10}
