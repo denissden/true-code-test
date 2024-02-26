@@ -18,7 +18,9 @@
 
 3. Implement an RPC client based on RabbitMQ to invoke IRemoteMethod on a remote node. Each remote method has some input
    and output (input & output), and its execution can be remotely interrupted. Use RabbitMQ.Client library. The
-   implementation should be built using docker compose.
+   implementation should be built using docker compose. 
+      - run `docker compose up -d --build`
+      - query [Http file](RabbitNodes.FibonacciApi/RabbitNodes.FibonacciApi.http)
 
 The application must:
 
