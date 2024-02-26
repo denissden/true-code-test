@@ -12,8 +12,12 @@ namespace TrueCodeTest.RpcClient.Impl.Server;
 public class RpcNodelet : ISubscriber
 {
     private readonly IModel _channel;
-    private readonly NodeConfig _nodeConfig;
     private readonly ConcurrentDictionary<string, CancellationTokenSource> _correlationIdToCancellation = new();
+    private readonly NodeConfig _nodeConfig;
+
+    private readonly Dictionary<string, Func<ReadOnlyMemory<byte>, CancellationToken, Task<byte[]>>>
+        _topicToHandler = new();
+
     private IBasicConsumer _discoveryConsumer;
     private string _discoveryQueue;
     private IBasicConsumer _rpcCancelConsumer;
@@ -21,9 +25,6 @@ public class RpcNodelet : ISubscriber
 
     private IBasicConsumer _rpcConsumer;
     private string _rpcQueue;
-
-    private readonly Dictionary<string, Func<ReadOnlyMemory<byte>, CancellationToken, Task<byte[]>>>
-        _topicToHandler = new();
 
     public RpcNodelet(IModel channel, NodeConfig nodeConfig)
     {
@@ -36,19 +37,19 @@ public class RpcNodelet : ISubscriber
     public bool IsInitialized { get; private set; }
     public IEnumerable<string> SubscribedTopics => _topicToHandler.Keys.ToArray();
 
-    public static RpcNodelet Create(IModel channel, NodeConfig nodeConfig)
-    {
-        var nodelet = new RpcNodelet(channel, nodeConfig);
-        nodelet.Init();
-        return nodelet;
-    }
-
     public void HandleRpc(string sharedQueue, string topic,
         Func<ReadOnlyMemory<byte>, CancellationToken, Task<byte[]>> handler)
     {
         _topicToHandler[topic] = handler;
         _channel.QueueBind(sharedQueue, _nodeConfig.RpcExchange, topic);
-        _channel.BasicConsume(sharedQueue, autoAck: false, _rpcConsumer);
+        _channel.BasicConsume(sharedQueue, false, _rpcConsumer);
+    }
+
+    public static RpcNodelet Create(IModel channel, NodeConfig nodeConfig)
+    {
+        var nodelet = new RpcNodelet(channel, nodeConfig);
+        nodelet.Init();
+        return nodelet;
     }
 
     private void Init()
@@ -74,10 +75,7 @@ public class RpcNodelet : ISubscriber
             [Constants.HeaderCancelQueue] = _rpcCancelQueue
         };
 
-        if (topic is not null)
-        {
-            headers.Add(Constants.HeaderTopic, topic);
-        }
+        if (topic is not null) headers.Add(Constants.HeaderTopic, topic);
 
         return headers;
     }
@@ -184,7 +182,7 @@ public class RpcNodelet : ISubscriber
             basicConsumer.Received += OnRpcCancelReceived;
             _rpcCancelConsumer = basicConsumer;
         }
-        
+
         var cancelQueueDeclareOk = _channel.QueueDeclare();
         _rpcCancelQueue = cancelQueueDeclareOk.QueueName;
         _channel.BasicConsume(_rpcCancelQueue, false, _rpcCancelConsumer);
@@ -232,7 +230,7 @@ public class RpcNodelet : ISubscriber
             // no task with suck correlation_id
             statusCode = Constants.StatusCodes.NotFound;
         }
-        
+
         var properties = GetDefaultProperties(consumer.Model, e, null);
         properties.Headers.Add(Constants.HeaderRpcMessageType, Constants.RpcMessageTypes.CancelResponse);
         properties.Headers.Add(Constants.HeaderStatusCode, statusCode);
@@ -291,7 +289,7 @@ public class RpcNodelet : ISubscriber
         var properties = GetDefaultProperties(consumer.Model, e, headerTopic);
         properties.Headers.Add(Constants.HeaderRpcMessageType, Constants.RpcMessageTypes.Response);
         properties.Headers.Add(Constants.HeaderStatusCode, statusCode);
-        consumer.Model.BasicPublish("", e.BasicProperties.ReplyTo, basicProperties: properties, body: body);
+        consumer.Model.BasicPublish("", e.BasicProperties.ReplyTo, properties, body);
 
         if (statusCode == Constants.StatusCodes.ServerError)
             consumer.Model.BasicNack(e.DeliveryTag, false, true);

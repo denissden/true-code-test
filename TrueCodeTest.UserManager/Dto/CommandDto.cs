@@ -9,8 +9,10 @@ namespace TrueCodeTest.UserManager.Dto;
 [JsonDerivedType(typeof(GetByIdAndDomainCommand), "get_user")]
 [JsonDerivedType(typeof(ListByDomainCommand), "list_domain_users")]
 [JsonDerivedType(typeof(FindByTag), "find_users_by_tag")]
-public record CommandDto();
+public record CommandDto;
 
 public record GetByIdAndDomainCommand(Guid Id, string Domain) : CommandDto;
+
 public record ListByDomainCommand(string Domain, int PageNumber, int PageSize) : CommandDto;
+
 public record FindByTag(string Domain, string Tag) : CommandDto;

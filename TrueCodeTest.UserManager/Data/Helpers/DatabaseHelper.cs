@@ -1,7 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using Microsoft.Extensions.Logging;
 using TrueCodeTest.UserManager.Data.Models;
 
 namespace TrueCodeTest.UserManager.Data.Helpers;
@@ -9,7 +6,7 @@ namespace TrueCodeTest.UserManager.Data.Helpers;
 public class DatabaseHelper
 {
     /// <summary>
-    /// Ensures that the database is created and seeded with the specified count of users asynchronously.
+    ///     Ensures that the database is created and seeded with the specified count of users asynchronously.
     /// </summary>
     /// <param name="sp">The service provider.</param>
     /// <param name="countOfUsers">The number of users to seed the database with (default is 500).</param>
@@ -18,15 +15,12 @@ public class DatabaseHelper
     {
         using var context = sp.GetRequiredService<UserManagerContext>();
 
-        if (await context.Database.EnsureCreatedAsync())
-        {
-            await DataSeed(context, countOfUsers);
-        }
+        if (await context.Database.EnsureCreatedAsync()) await DataSeed(context, countOfUsers);
     }
 
     public static async Task DataSeed(UserManagerContext context, int countOfUsers)
     {
-        string[] names = new string[]
+        string[] names =
         {
             "Olivia", "Emma", "Ava", "Sophia", "Isabella",
             "Charlotte", "Amelia", "Mia", "Harper", "Evelyn",
@@ -34,51 +28,51 @@ public class DatabaseHelper
             "Luna", "Sofia", "Avery", "Mila", "Aria"
         };
 
-        string[] surnames = new string[]
+        string[] surnames =
         {
             "Smith", "Johnson", "Williams", "Brown", "Jones",
             "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
             "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson",
             "Thomas", "Taylor", "Moore", "Jackson", "Martin"
         };
-        
-        string[] domains = new string[]
+
+        string[] domains =
         {
             "Technology", "Health", "Finance", "Education", "Entertainment"
         };
 
-        string[] tags = new string[]
+        string[] tags =
         {
             "Innovation", "Wellness", "Technology", "Learning", "Movies",
             "Software", "Fitness", "Economy", "Science", "Music"
         };
 
         var rnd = new Random();
-        
-        var tagModels = tags.Select(t => new Tag()
+
+        var tagModels = tags.Select(t => new Tag
         {
             Domain = domains.OrderBy(x => rnd.Next()).First(),
             Value = t
         });
         await context.AddRangeAsync(tagModels);
-        
-        var userModels = Enumerable.Range(1, countOfUsers).Select(t => new User()
+
+        var userModels = Enumerable.Range(1, countOfUsers).Select(t => new User
         {
             Domain = domains.OrderBy(x => rnd.Next()).First(),
-            Name = names.OrderBy(x => rnd.Next()).First() + " " + surnames.OrderBy(x => rnd.Next()).First(),
+            Name = names.OrderBy(x => rnd.Next()).First() + " " + surnames.OrderBy(x => rnd.Next()).First()
         });
         await context.AddRangeAsync(userModels);
 
         var userTags = userModels.SelectMany(
             u => Enumerable.Range(1, rnd.Next(1, 5))
-                .Select(_ => new TagToUser()
+                .Select(_ => new TagToUser
                 {
                     User = u,
                     Tag = tagModels.OrderBy(x => rnd.Next()).First()
                 })
-            );
+        );
         await context.AddRangeAsync(userTags);
-        
+
         await context.SaveChangesAsync();
     }
 }

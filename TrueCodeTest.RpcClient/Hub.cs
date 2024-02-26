@@ -1,7 +1,5 @@
 using RabbitMQ.Client;
 using TrueCodeTest.RpcClient.Config;
-using TrueCodeTest.RpcClient.Impl;
-using TrueCodeTest.RpcClient.Impl.Client;
 using TrueCodeTest.RpcClient.Impl.Client.Discovery;
 using TrueCodeTest.RpcClient.Impl.Client.Public;
 using TrueCodeTest.RpcClient.Impl.Client.Rpc;
@@ -23,7 +21,7 @@ public class Hub : IDisposable
 
     public IConnection DefaultConnection { get; private set; }
     public RpcNode DefaultNode { get; private set; }
-    
+
     public INodeletProvider NodeletProvider { get; private set; }
 
     public void Dispose()
@@ -48,7 +46,7 @@ public class Hub : IDisposable
         });
         var clientConfig = new ClientConfig
         {
-            IsAsync = _connectionFactory.DispatchConsumersAsync,
+            IsAsync = _connectionFactory.DispatchConsumersAsync
         };
         _discoveryClient = DiscoveryClient.Create(DefaultConnection.CreateModel(), clientConfig);
         _remoteNodeletClient = RemoteNodeletClient.Create(DefaultConnection.CreateModel(), clientConfig);

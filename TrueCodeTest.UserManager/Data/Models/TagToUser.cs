@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrueCodeTest.UserManager.Data.Models;
 
-public class TagToUser 
+public class TagToUser
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid EntityId { get; set;}
+    public Guid EntityId { get; set; }
+
     public Guid UserId { get; set; }
     public Guid TagId { get; set; }
 

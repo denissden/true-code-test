@@ -10,7 +10,7 @@ public class TagDto
 
     public static TagDto FromTag(Tag tag)
     {
-        return new TagDto()
+        return new TagDto
         {
             Id = tag.TagId,
             Domain = tag.Domain,

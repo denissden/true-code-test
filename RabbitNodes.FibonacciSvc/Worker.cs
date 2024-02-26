@@ -7,7 +7,7 @@ namespace RabbitNodes.FibonacciSvc;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
     private Hub _hub;
 
     public Worker(ILogger<Worker> logger, IConfiguration configuration)
@@ -23,21 +23,21 @@ public class Worker : BackgroundService
         {
             Uri = new Uri(_configuration.GetConnectionString("RabbitMQ")),
             DispatchConsumersAsync = false,
-            ConsumerDispatchConcurrency = Environment.ProcessorCount,
+            ConsumerDispatchConcurrency = Environment.ProcessorCount
         };
-        _hub = Hub.Connect(connectionFactory: connFactory);
+        _hub = Hub.Connect(connFactory);
 
         var channel = _hub.DefaultConnection.CreateModel();
-        channel.QueueDeclare("q_fibonacci", durable: true, exclusive: false, autoDelete: false);
+        channel.QueueDeclare("q_fibonacci", true, false, false);
         channel.Dispose();
-        
+
         _hub.DefaultNode.HandleRpc("q_fibonacci", Fibonacci.Topic, HandleFibonacci);
     }
 
     private async Task<byte[]> HandleFibonacci(ReadOnlyMemory<byte> body, CancellationToken token)
     {
         var request = Fibonacci.Request.Parse(body);
-    
+
         var result = await GetFibonacci(request.F, token);
         var response = new Fibonacci.Response
         {
@@ -45,29 +45,28 @@ public class Worker : BackgroundService
         };
         return response.Serialize();
     }
-    
-    async Task<int> GetFibonacci(int n, CancellationToken cancellationToken)
+
+    private async Task<int> GetFibonacci(int n, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-    
+
         if (n <= 1)
         {
             return n;
         }
-        else
-        {
-            int a = await GetFibonacci(n - 1, cancellationToken);
-            int b = await GetFibonacci(n - 2, cancellationToken);
-            return await Add(a, b, cancellationToken);
-        }
+
+        var a = await GetFibonacci(n - 1, cancellationToken);
+        var b = await GetFibonacci(n - 2, cancellationToken);
+        return await Add(a, b, cancellationToken);
     }
-    
-    async Task<int> Add(int a, int b, CancellationToken cancellationToken)
+
+    private async Task<int> Add(int a, int b, CancellationToken cancellationToken)
     {
         var nodelet = await _hub!.NodeletProvider.GetNodelet([AddNumbers.Topic], cancellationToken: cancellationToken);
 
-        Console.WriteLine($"""Discovered nodelet - id: {nodelet.Id}; topics: {string.Join(" ,", nodelet.SupportedTopics)}""");
-        var request = new AddNumbers.Request() { A = a, B = b };
+        Console.WriteLine(
+            $"""Discovered nodelet - id: {nodelet.Id}; topics: {string.Join(" ,", nodelet.SupportedTopics)}""");
+        var request = new AddNumbers.Request { A = a, B = b };
 
         var execution = nodelet.Execute(request.Serialize(), AddNumbers.Topic, cancellationToken);
 

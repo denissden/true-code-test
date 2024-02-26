@@ -18,8 +18,8 @@
       - 8080:8080
     volumes:
       - ./RabbitNodes.FibonacciApi/appsettings.json:/app/appsettings.json
-      
-    depends_on: 
+    
+    depends_on:
       - rabbitnodes.rabbitmq
 
   rabbitnodes.fibonaccisvc:

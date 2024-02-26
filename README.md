@@ -21,6 +21,7 @@
    implementation should be built using docker compose.
 
 The application must:
+
 - be implemented based on the console (not ASP.NET Core)
 - use .NET 5 or higher
 - use EF API

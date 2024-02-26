@@ -10,7 +10,7 @@ public class UserDto
 
     public static UserDto FromUser(User user)
     {
-        return new UserDto()
+        return new UserDto
         {
             Id = user.UserId,
             Domain = user.Domain,

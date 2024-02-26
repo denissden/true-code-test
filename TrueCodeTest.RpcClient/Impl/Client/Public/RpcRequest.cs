@@ -6,11 +6,12 @@ namespace TrueCodeTest.RpcClient.Impl.Client.Public;
 
 public class RpcRequest : IRemoteMethodHandler
 {
-    private readonly RpcRequestState _rpcRequestState;
-    private readonly RemoteNodeletClient _nodeletClient;
     private readonly DiscoveredNodelet _discoveredNodelet;
+    private readonly RemoteNodeletClient _nodeletClient;
+    private readonly RpcRequestState _rpcRequestState;
 
-    public RpcRequest(RpcRequestState rpcRequestState, RemoteNodeletClient nodeletClient, DiscoveredNodelet discoveredNodelet)
+    public RpcRequest(RpcRequestState rpcRequestState, RemoteNodeletClient nodeletClient,
+        DiscoveredNodelet discoveredNodelet)
     {
         _rpcRequestState = rpcRequestState;
         _nodeletClient = nodeletClient;
@@ -20,9 +21,8 @@ public class RpcRequest : IRemoteMethodHandler
     public async ValueTask<byte[]> GetOutputAsync(CancellationToken? cancellationToken = null)
     {
         if (cancellationToken is not null)
-        {
-            cancellationToken.Value.Register(() => _rpcRequestState.CompletionSource.TrySetCanceled(cancellationToken.Value), useSynchronizationContext: false);
-        }
+            cancellationToken.Value.Register(
+                () => _rpcRequestState.CompletionSource.TrySetCanceled(cancellationToken.Value), false);
 
         var (e, body) = await _rpcRequestState.CompletionSource.Task;
         return body;
@@ -31,16 +31,14 @@ public class RpcRequest : IRemoteMethodHandler
     public Task CancelAsync(CancellationToken? cancellationToken = null)
     {
         var cancelTask = _nodeletClient.CancelRpc(
-            correlationId: _rpcRequestState.CorrelationId,
-            topic: _rpcRequestState.RequestTopic,
-            routingKey: _discoveredNodelet.CancelQueue,
-            exchange: "");
-        
+            _rpcRequestState.CorrelationId,
+            _rpcRequestState.RequestTopic,
+            _discoveredNodelet.CancelQueue,
+            "");
+
         if (cancellationToken is not null)
-        {
             cancellationToken.Value.Register(() => _rpcRequestState.CancelCompletionSource?.TrySetCanceled(),
-                useSynchronizationContext: false);
-        }
+                false);
 
         return cancelTask;
     }

@@ -15,14 +15,14 @@ public class DiscoveredNodelet
     public static DiscoveredNodelet FromEvent(BasicDeliverEventArgs e)
     {
         var contractResponse = NodeDiscovery.Response.Parse(e.Body);
-        return new DiscoveredNodelet()
+        return new DiscoveredNodelet
         {
             SupportedTopics = contractResponse.Topics,
             Nodelet = e.BasicProperties.Headers.GetStringHeader(Constants.HeaderNodelet),
             NodeName = e.BasicProperties.Headers.GetStringHeader(Constants.HeaderNodeName),
             RpcQueue = e.BasicProperties.Headers.GetStringHeader(Constants.HeaderRpcQueue),
             CancelQueue = e.BasicProperties.Headers.GetStringHeader(Constants.HeaderCancelQueue),
-            DiscoveryQueue = e.BasicProperties.Headers.GetStringHeader(Constants.HeaderDiscoveryQueue),
+            DiscoveryQueue = e.BasicProperties.Headers.GetStringHeader(Constants.HeaderDiscoveryQueue)
         };
     }
 }

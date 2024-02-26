@@ -6,7 +6,7 @@ public class RpcRequestState
 {
     public string CorrelationId { get; set; }
     public string RequestTopic { get; set; }
-    
+
     public TaskCompletionSource<(BasicDeliverEventArgs, byte[])> CompletionSource { get; set; } = new();
     public TaskCompletionSource? CancelCompletionSource { get; set; }
 
@@ -29,7 +29,7 @@ public class RpcRequestState
     {
         RequestLifetime = RequestLifetime.Started;
     }
-    
+
     public void SetCompleted(BasicDeliverEventArgs e)
     {
         RequestLifetime = RequestLifetime.Finished;
@@ -47,14 +47,14 @@ public class RpcRequestState
         CancelCompletionSource = new TaskCompletionSource();
         CancelRequestLifetime = RequestLifetime.Started;
     }
-    
+
     public void SetCancelled()
     {
         CancelCompletionSource?.SetResult();
         CancelRequestLifetime = RequestLifetime.Finished;
         CompletionSource.TrySetCanceled();
     }
-    
+
     public void SetCancelException(Exception exception)
     {
         CancelCompletionSource?.SetException(exception);

@@ -18,10 +18,11 @@ public class Nodelet : IRpcNodelet
     public IRemoteMethodHandler Execute(byte[] body, string topic, CancellationToken? cancellationToken = null)
     {
         var rpcRequestState = _remoteNodeletClient.ExecuteRpc(body, topic, _discoveredNodelet.RpcQueue, "");
-        cancellationToken?.Register(() => 
-            _remoteNodeletClient.CancelRpc(rpcRequestState.CorrelationId, topic, routingKey: _discoveredNodelet.CancelQueue, ""),
-            useSynchronizationContext: false
-            );
+        cancellationToken?.Register(() =>
+                _remoteNodeletClient.CancelRpc(rpcRequestState.CorrelationId, topic, _discoveredNodelet.CancelQueue,
+                    ""),
+            false
+        );
 
         return new RpcRequest(rpcRequestState, _remoteNodeletClient, _discoveredNodelet);
     }

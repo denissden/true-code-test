@@ -12,19 +12,21 @@ public class DiscoveryClient
     private readonly IModel _channel;
     private readonly ClientConfig _clientConfig;
 
+    private readonly ConcurrentDictionary<string, List<DiscoveredNodelet>>
+        _multipleNodeResponses = new(); // TODO: discover multiple nodes
+
+    private readonly ConcurrentDictionary<string, TaskCompletionSource<DiscoveredNodelet>> _singleNodeResponses = new();
+
     private IBasicConsumer _replyToConsumer;
     private string _replyToQueue;
 
-    private readonly ConcurrentDictionary<string, TaskCompletionSource<DiscoveredNodelet>> _singleNodeResponses = new();
-    private readonly ConcurrentDictionary<string, List<DiscoveredNodelet>> _multipleNodeResponses = new(); // TODO: discover multiple nodes
-    
     private DiscoveryClient(IModel channel, ClientConfig clientConfig)
     {
         _channel = channel;
         _clientConfig = clientConfig;
         Id = Guid.NewGuid();
     }
-    
+
     public Guid Id { get; init; }
 
     public static DiscoveryClient Create(IModel channel, ClientConfig clientConfig)
@@ -38,23 +40,23 @@ public class DiscoveryClient
         CancellationToken cancellationToken = default)
     {
         timeout = timeout ?? TimeSpan.FromSeconds(1);
-        
+
         var timeoutTask = Task.Delay(timeout.Value, cancellationToken);
-        
+
         var correlationId = Guid.NewGuid().ToString();
-        
+
         var tcs = new TaskCompletionSource<DiscoveredNodelet>();
         cancellationToken.Register(() =>
         {
             _singleNodeResponses.TryRemove(correlationId, out _);
             tcs.TrySetCanceled(cancellationToken);
-        }, useSynchronizationContext: false);
+        }, false);
         _singleNodeResponses.TryAdd(correlationId, tcs);
-        
+
         SendDiscovery(topics, correlationId);
-        
+
         cancellationToken.ThrowIfCancellationRequested();
-        var firstCompletedTask = await Task.WhenAny(new Task[] { timeoutTask, tcs.Task }).ConfigureAwait(false);
+        var firstCompletedTask = await Task.WhenAny(new[] { timeoutTask, tcs.Task }).ConfigureAwait(false);
         if (firstCompletedTask == timeoutTask)
         {
             tcs.TrySetCanceled(cancellationToken);
@@ -70,17 +72,18 @@ public class DiscoveryClient
         props.CorrelationId = correlationId;
         props.Headers = GetHeaders();
         props.ReplyTo = _replyToQueue;
-        var request = new NodeDiscovery.Request() { Topics = topics };
-        _channel.BasicPublish(_clientConfig.NodeDiscoveryExchange, _clientConfig.NodeDiscoveryRequestTopic, props, request.Serialize());
+        var request = new NodeDiscovery.Request { Topics = topics };
+        _channel.BasicPublish(_clientConfig.NodeDiscoveryExchange, _clientConfig.NodeDiscoveryRequestTopic, props,
+            request.Serialize());
     }
-    
+
     private Dictionary<string, object> GetHeaders()
     {
         return new Dictionary<string, object>
         {
             [Constants.HeaderTopic] = _clientConfig.NodeDiscoveryRequestTopic,
             [Constants.HeaderClientName] = _clientConfig.ClientName,
-            [Constants.HeaderClientId] = Id.ToString(),
+            [Constants.HeaderClientId] = Id.ToString()
         };
     }
 
@@ -104,7 +107,7 @@ public class DiscoveryClient
             basicConsumer.Received += OnNodeletResponseReceived;
             _replyToConsumer = basicConsumer;
         }
-        
+
         var rpcQueueDeclareOk = _channel.QueueDeclare();
         _replyToQueue = rpcQueueDeclareOk.QueueName;
         _channel.BasicConsume(_replyToQueue, true, _replyToConsumer);
@@ -116,13 +119,9 @@ public class DiscoveryClient
         Debug.Assert(consumer is not null);
 
         if (_singleNodeResponses.Remove(e.BasicProperties.CorrelationId, out var tcs))
-        {
             tcs.TrySetResult(DiscoveredNodelet.FromEvent(e));
-        }
 
         if (_multipleNodeResponses.TryGetValue(e.BasicProperties.CorrelationId, out var list))
-        {
             list.Add(DiscoveredNodelet.FromEvent(e));
-        }
     }
 }

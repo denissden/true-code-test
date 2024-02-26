@@ -15,10 +15,11 @@ public class NodeletProvider : INodeletProvider
         _remoteNodeletClient = remoteNodeletClient;
     }
 
-    public async Task<IRpcNodelet> GetNodelet(string[] topics, TimeSpan? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<IRpcNodelet> GetNodelet(string[] topics, TimeSpan? timeout = null,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         var discoveredNodelet = await _discoveryClient.DiscoverOneNodelet(topics, timeout, cancellationToken);
 
         return new Nodelet(discoveredNodelet, _remoteNodeletClient);

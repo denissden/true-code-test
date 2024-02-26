@@ -27,19 +27,17 @@ public class RpcNode : IDisposable, ISubscriber
         _connection.Dispose();
     }
 
+    public void HandleRpc(string sharedQueue, string topic,
+        Func<ReadOnlyMemory<byte>, CancellationToken, Task<byte[]>> handler)
+    {
+        foreach (var nodelet in _nodelets) nodelet.HandleRpc(sharedQueue, topic, handler);
+    }
+
     public static RpcNode Create(IConnection connection, NodeConfig nodeConfig)
     {
         var node = new RpcNode(connection, nodeConfig);
         node.Init();
         return node;
-    }
-    
-    public void HandleRpc(string sharedQueue, string topic, Func<ReadOnlyMemory<byte>, CancellationToken, Task<byte[]>> handler)
-    {
-        foreach (var nodelet in _nodelets)
-        {
-            nodelet.HandleRpc(sharedQueue, topic, handler);
-        }
     }
 
     /// <summary>
