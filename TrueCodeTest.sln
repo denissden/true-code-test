@@ -4,6 +4,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCodeTest.StreamReader",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCodeTest.UserManager", "TrueCodeTest.UserManager\TrueCodeTest.UserManager.csproj", "{E1928BB7-7D6D-49DD-90B7-1F79D57D38CA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RpcClient", "RpcClient", "{8DD40F93-6CBC-4B47-BD3A-1E60A04A5D4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueCodeTest.RpcClient", "TrueCodeTest.RpcClient\TrueCodeTest.RpcClient.csproj", "{28ECB214-C54F-409E-B9AC-0BC6DE08C5C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nodes", "Nodes", "{4EF68A9E-C8C5-4666-81E3-BCD86BD70AB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitNodes.Shared", "RabbitNodes.Shared\RabbitNodes.Shared.csproj", "{2B57B2EB-4C4F-462E-8D96-25551E64CD12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitNodes.FibonacciApi", "RabbitNodes.FibonacciApi\RabbitNodes.FibonacciApi.csproj", "{42C46717-B934-461D-898C-2F98A931783F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BBFE9D9-7DE2-469C-BBA5-69D4D40C187B}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitNodes.MathSvc", "RabbitNodes.MathSvc\RabbitNodes.MathSvc.csproj", "{75672043-E890-4B0E-A3DD-C0A93DBC9494}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitNodes.FibonacciSvc", "RabbitNodes.FibonacciSvc\RabbitNodes.FibonacciSvc.csproj", "{6E7BE942-3572-42CA-BDC5-AE3721E28C84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +37,33 @@ Global
 		{E1928BB7-7D6D-49DD-90B7-1F79D57D38CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1928BB7-7D6D-49DD-90B7-1F79D57D38CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1928BB7-7D6D-49DD-90B7-1F79D57D38CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28ECB214-C54F-409E-B9AC-0BC6DE08C5C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28ECB214-C54F-409E-B9AC-0BC6DE08C5C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28ECB214-C54F-409E-B9AC-0BC6DE08C5C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28ECB214-C54F-409E-B9AC-0BC6DE08C5C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B57B2EB-4C4F-462E-8D96-25551E64CD12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B57B2EB-4C4F-462E-8D96-25551E64CD12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B57B2EB-4C4F-462E-8D96-25551E64CD12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B57B2EB-4C4F-462E-8D96-25551E64CD12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42C46717-B934-461D-898C-2F98A931783F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42C46717-B934-461D-898C-2F98A931783F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42C46717-B934-461D-898C-2F98A931783F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42C46717-B934-461D-898C-2F98A931783F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75672043-E890-4B0E-A3DD-C0A93DBC9494}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75672043-E890-4B0E-A3DD-C0A93DBC9494}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75672043-E890-4B0E-A3DD-C0A93DBC9494}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75672043-E890-4B0E-A3DD-C0A93DBC9494}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E7BE942-3572-42CA-BDC5-AE3721E28C84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E7BE942-3572-42CA-BDC5-AE3721E28C84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E7BE942-3572-42CA-BDC5-AE3721E28C84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E7BE942-3572-42CA-BDC5-AE3721E28C84}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{28ECB214-C54F-409E-B9AC-0BC6DE08C5C8} = {8DD40F93-6CBC-4B47-BD3A-1E60A04A5D4C}
+		{4EF68A9E-C8C5-4666-81E3-BCD86BD70AB5} = {8DD40F93-6CBC-4B47-BD3A-1E60A04A5D4C}
+		{2B57B2EB-4C4F-462E-8D96-25551E64CD12} = {4EF68A9E-C8C5-4666-81E3-BCD86BD70AB5}
+		{42C46717-B934-461D-898C-2F98A931783F} = {4EF68A9E-C8C5-4666-81E3-BCD86BD70AB5}
+		{75672043-E890-4B0E-A3DD-C0A93DBC9494} = {4EF68A9E-C8C5-4666-81E3-BCD86BD70AB5}
+		{6E7BE942-3572-42CA-BDC5-AE3721E28C84} = {4EF68A9E-C8C5-4666-81E3-BCD86BD70AB5}
 	EndGlobalSection
 EndGlobal

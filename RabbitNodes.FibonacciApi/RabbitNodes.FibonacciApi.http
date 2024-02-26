@@ -1,0 +1,11 @@
+@RabbitNodes.FibonacciApi_HostAddress = http://localhost:5103
+
+GET {{RabbitNodes.FibonacciApi_HostAddress}}/fibonacci?f=12&timeout=10000
+Accept: application/json
+
+###
+@RabbitNodes.FibonacciApi_DockerAddress = http://localhost:8080
+
+GET {{RabbitNodes.FibonacciApi_DockerAddress}}/fibonacci?f=14&timeout=100
+Accept: application/json
+

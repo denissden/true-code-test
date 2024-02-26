@@ -1,0 +1,43 @@
+﻿services:
+  rabbitnodes.rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    hostname: rabbitmq
+  
+  rabbitnodes.fibonacciapi:
+    image: rabbitnodes.fibonacciapi
+    build:
+      context: .
+      dockerfile: RabbitNodes.FibonacciApi/Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - ./RabbitNodes.FibonacciApi/appsettings.json:/app/appsettings.json
+      
+    depends_on: 
+      - rabbitnodes.rabbitmq
+
+  rabbitnodes.fibonaccisvc:
+    image: rabbitnodes.fibonacciapisvc
+    build:
+      context: .
+      dockerfile: RabbitNodes.FibonacciSvc/Dockerfile
+    environment:
+      - RABBITMQ_URI=amqp://guest:guest@rabbitnodes.rabbitmq:5672/
+    depends_on:
+      - rabbitnodes.rabbitmq
+
+  rabbitnodes.mathsvc:
+    image: rabbitnodes.mathsvc
+    build:
+      context: .
+      dockerfile: RabbitNodes.MathSvc/Dockerfile
+    environment:
+      - RABBITMQ_URI=amqp://guest:guest@rabbitnodes.rabbitmq:5672/
+    depends_on:
+      - rabbitnodes.rabbitmq
