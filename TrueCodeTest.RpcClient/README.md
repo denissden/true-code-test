@@ -2,6 +2,35 @@
 
 ## Overview
 
+Connect
+```csharp
+var connFactory = new ConnectionFactory
+{
+    Uri = new Uri(...),
+    DispatchConsumersAsync = false,
+    ConsumerDispatchConcurrency = Environment.ProcessorCount,
+};
+var hub = Hub.Connect(connectionFactory: connFactory);
+```
+
+RPC request with Test api
+```csharp
+var nodelet = await _hub!.NodeletProvider.GetNodelet([AddNumbers.Topic], cancellationToken: cancellationToken);
+var request = new AddNumbers.Request() { A = a, B = b };
+var execution = nodelet.Execute(request.Serialize(), AddNumbers.Topic, cancellationToken);
+var result = await execution.GetOutputAsync(cancellationToken);
+```
+
+Subscribe to RPC commands
+```csharp
+_hub.DefaultNode.HandleRpc("q_fibonacci", Fibonacci.Topic, HandleFibonacci);
+```
+
+Cancel running request
+```csharp
+await execution.CancelAsync();
+```
+
 ## Features
 
 - **Node discovery:** Client has ability to request available nodes and their supported procedures.
@@ -31,9 +60,17 @@
 - Nodelet dispatches requests from _zero or more topics_.
 - Nodelet listens on _multiple queues_.
 
+## Test task interfaces
+
+Although the client is useful by itself. A couple interfaces were implemented to comply with test task's requirements.
+All example services are using those mentioned interfaces.
+
+The problem with task interfaces is having to way to send the request to any node. The solution could be implementing a
+discovered nodes pool. Though, this is an overkill for the task.
+
 ## Design decisions
 
-## Cancellation queue
+### Cancellation queue
 
 The main requirement of the system is to handle RPC cancellation properly.
 The first idea that may come to mind is using the same queue for requests and cancellation requests.
@@ -44,7 +81,7 @@ PrefetchCount doesn't allow them to be consumed. It was decided to use a differe
 this way the only bottleneck is the consumer
 itself. [Read more about PrefetchCount](https://www.rabbitmq.com/docs/consumer-prefetch)
 
-## Discovery queue
+### Discovery queue
 
 For the same reasons as cancellation queue, discovery queue is also separated. First-responded-nodelet discoveries
 should happen fast, without even waiting for cancellation requests. It is also quite nifty to separate cancellation and

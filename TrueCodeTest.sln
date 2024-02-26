@@ -17,6 +17,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2BBFE9D9-7DE2-469C-BBA5-69D4D40C187B}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitNodes.MathSvc", "RabbitNodes.MathSvc\RabbitNodes.MathSvc.csproj", "{75672043-E890-4B0E-A3DD-C0A93DBC9494}"
